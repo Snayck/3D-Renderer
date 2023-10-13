@@ -5,7 +5,7 @@
 - allow shapes to be colored using a colors class with built-in colors and custom ones
 - shading (maybe based on distance?, if not then calculate how much of the face is visible and shade accordingly or something of that sort)
 - organize/simplify
-- create more python files to divide and simplify code. (libraries in a sence)
+- create more python files to divide and simplify code. (libraries in a sense)
 - render using tris and not quads 💀
 - make it where it doesn't render faces behind you
 - constructor for creating shapes easier / clean object class for simplification
