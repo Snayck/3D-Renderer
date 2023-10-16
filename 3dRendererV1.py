@@ -22,6 +22,77 @@ projection_plane_right = projection_plane_width / 2
 projection_plane_bottom = -projection_plane_height / 2
 projection_plane_top = projection_plane_height / 2
 
+class Prism:
+    def __init__(self, pos: list[int, int, int], sizeWHD: list[int, int, int], rot: list[int, int, int]):
+        self.width = sizeWHD[0]
+        self.height = sizeWHD[1]
+        self.depth = sizeWHD[2]
+
+        self.x = pos[0]
+        self.y = pos[1]
+        self.z = pos[2]
+
+        self.rot = rot[0]
+        self.rot2 = rot[1]
+        self.rot3 = rot[2]
+
+        self.shape = [
+            [(-1*self.width), (1*self.height), (-1*self.depth)], 
+            [(-1*self.width), (1*self.height), (1*self.depth)],
+            [(1*self.width), (1*self.height), (1*self.depth)],
+            [(1*self.width), (1*self.height), (-1*self.depth)],
+            [(0*self.width), (-1*self.height), (0*self.depth)],
+        ]
+
+        self.vertices = [
+            [(-1*self.width), (1*self.height), (-1*self.depth)], 
+            [(-1*self.width), (1*self.height), (1*self.depth)],
+            [(1*self.width), (1*self.height), (1*self.depth)],
+            [(1*self.width), (1*self.height), (-1*self.depth)],
+            [(0*self.width), (-1*self.height), (0*self.depth)],
+        ]
+        
+        
+        self.faces = [
+            [0, 1, 2, 3],
+            [4, 1, 0],
+            [4, 2, 1],
+            [4, 2, 3],
+            [4, 0 ,3],
+        ]
+
+        self.normals = []
+        for face in self.faces:
+            face_vertices = [self.vertices[i] for i in face]
+            self.normals.append(calculate_normal(face_vertices))
+
+    def update(self, sceneFaces):
+        self.normals = []
+        for face in self.faces:
+            face_vertices = [self.vertices[i] for i in face]
+            self.normals.append(calculate_normal(face_vertices))
+
+        if self.rot != 0:
+            if self.rot > 6.27:
+                self.rot = 0
+            if self.rot < -6.27:
+                self.rot = 0
+        elif self.rot2 != 0:
+            if self.rot2 > 6.27:
+                self.rot2 = 0
+            if self.rot2 < -6.27:
+                self.rot2 = 0
+        elif self.rot3 != 0:
+            if self.rot3 > 6.27:
+                self.rot3 = 0
+            if self.rot3 < -6.27:
+                self.rot3 = 0
+
+        if (self.rot != 0 or self.rot2 != 0 or self.rot3 != 0):
+            for i, vertex in enumerate(self.shape):
+                self.vertices[i] = rotate_around_axes(vertex, rotation_axis, self.rot, rotation_axis2, self.rot2, rotation_axis3, self.rot3, self.x, self.y, self.z)
+
+        sceneFaces.append([self.vertices, self.faces, self.normals])
 
 
 class Cube:
@@ -29,23 +100,38 @@ class Cube:
         self.width = sizeWHD[0]
         self.height = sizeWHD[1]
         self.depth = sizeWHD[2]
+
         self.x = pos[0]
-        self.y = pos[2]
-        self.z = pos[1]
+        self.y = pos[1]
+        self.z = pos[2]
+
         self.rot = rot[0]
         self.rot2 = rot[1]
         self.rot3 = rot[2]
-        
-        self.vertices = [
-            [(-1*self.width) + self.x, (-1*self.height) + self.z, (-1*self.depth) + self.y],
-            [(-1*self.width) + self.x, (-1*self.height) + self.z, (1*self.depth) + self.y],
-            [(-1*self.width) + self.x, (1*self.height) + self.z, (-1*self.depth) + self.y],
-            [(-1*self.width) + self.x, (1*self.height) + self.z, (1*self.depth) + self.y],
-            [(1*self.width) + self.x, (-1*self.height) + self.z, (-1*self.depth) + self.y],
-            [(1*self.width) + self.x, (-1*self.height) + self.z, (1*self.depth) + self.y],
-            [(1*self.width) + self.x, (1*self.height) + self.z, (-1*self.depth) + self.y],
-            [(1*self.width) + self.x, (1*self.height) + self.z, (1*self.depth) + self.y],
+
+        self.shape = [
+            [(-1*self.width), (-1*self.height), (-1*self.depth)],
+            [(-1*self.width), (-1*self.height), (1*self.depth)],
+            [(-1*self.width), (1*self.height), (-1*self.depth)],
+            [(-1*self.width), (1*self.height), (1*self.depth)],
+            [(1*self.width), (-1*self.height), (-1*self.depth)],
+            [(1*self.width), (-1*self.height), (1*self.depth)],
+            [(1*self.width), (1*self.height), (-1*self.depth)],
+            [(1*self.width), (1*self.height), (1*self.depth)],
         ]
+
+        self.vertices = [
+            [(-1*self.width), (-1*self.height), (-1*self.depth)],
+            [(-1*self.width), (-1*self.height), (1*self.depth)],
+            [(-1*self.width), (1*self.height), (-1*self.depth)],
+            [(-1*self.width), (1*self.height), (1*self.depth)],
+            [(1*self.width), (-1*self.height), (-1*self.depth)],
+            [(1*self.width), (-1*self.height), (1*self.depth)],
+            [(1*self.width), (1*self.height), (-1*self.depth)],
+            [(1*self.width), (1*self.height), (1*self.depth)],
+        ]
+        
+
         self.faces = [
             [0, 1, 3, 2],
             [1, 5, 7, 3], 
@@ -71,23 +157,20 @@ class Cube:
                 self.rot = 0
             if self.rot < -6.27:
                 self.rot = 0
-            for i, vertex in enumerate(self.vertices):
-                self.vertices[i] = rotate_around_axes(vertex, rotation_axis, self.rot, rotation_axis2, self.rot2, rotation_axis3, self.rot3, self.x, self.y, self.z)
         elif self.rot2 != 0:
             if self.rot2 > 6.27:
                 self.rot2 = 0
             if self.rot2 < -6.27:
                 self.rot2 = 0
-            for i, vertex in enumerate(self.vertices):
-                    self.vertices[i] = rotate_around_axes(vertex, rotation_axis, self.rot, rotation_axis2, self.rot2, rotation_axis3, self.rot3, self.x, self.y, self.z)
         elif self.rot3 != 0:
             if self.rot3 > 6.27:
                 self.rot3 = 0
             if self.rot3 < -6.27:
                 self.rot3 = 0
+        if (self.rot != 0 or self.rot2 != 0 or self.rot3 != 0):
             for i, vertex in enumerate(self.shape):
                 self.vertices[i] = rotate_around_axes(vertex, rotation_axis, self.rot, rotation_axis2, self.rot2, rotation_axis3, self.rot3, self.x, self.y, self.z)
-
+                
         sceneFaces.append([self.vertices, self.faces, self.normals])
 
 colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0), (255, 0, 255), (0, 255, 255)]
@@ -122,7 +205,7 @@ def rotate_around_axes(vertex, axis1, angle1, axis2, angle2, axis3, angle3, x, y
                                 [t3*x3*y3+z3*s3, t3*y3*y3+c3,   t3*y3*z3-x3*s3],
                                 [t3*x3*z3-y3*s3, t3*y3*z3+x3*s3, t3*z3*z3+c3  ]])
     
-    return np.dot(rotation_matrix3, np.dot(rotation_matrix2, np.dot(rotation_matrix1, (vertex[0]+x, vertex[1]-y, vertex[2]+z))))
+    return np.dot(rotation_matrix3, np.dot(rotation_matrix2, np.dot(rotation_matrix1, (vertex[0], vertex[1], vertex[2])))) + [x,y,z]
 
 def calculate_normal(face_vertices):
     v1 = np.array(face_vertices[0])
@@ -166,8 +249,8 @@ def renderFaces(sceneFaces):
         normal = obj[2][i]
         # check if the face is facing towards the camera
         camera_vector = np.array(camera_direction) - np.array(camera_position)
-        if np.dot(normal, camera_vector) > 0:
-            continue
+        #if np.dot(normal, camera_vector) > 0:
+            #continue
        
         projected_vertices = []
         for vertex in obj[0]:
@@ -187,6 +270,7 @@ def renderFaces(sceneFaces):
         pygame.draw.polygon(screen, color, points)
 
 cube = Cube((0, 0, 0), (1, 1, 1), (0, 0, 0))
+prism = Prism((2, -2, 1), (1, 1, 1), (1, 0, 0))
 
 while True:
     for event in pygame.event.get():
@@ -209,21 +293,26 @@ while True:
         camera_position[1] -= 0.05
     if keys[pygame.K_LCTRL]:
         camera_position[1] += 0.05
-    if keys[pygame.K_UP]:
-        camera_direction[1] += 0.1
-    if keys[pygame.K_DOWN]:
-        camera_direction[1] -= 0.1
-    if keys[pygame.K_LEFT]:
-        camera_direction[0] += 0.1
-    if keys[pygame.K_RIGHT]:
-        camera_direction[0] -= 0.1
-    if keys[pygame.K_q]:
-        camera_direction[2] += 0.1
-    if keys[pygame.K_e]:
-        camera_direction[2] -= 0.1
+#    if keys[pygame.K_UP]:
+#        camera_direction[1] += 0.1
+#    if keys[pygame.K_DOWN]:
+#        camera_direction[1] -= 0.1
+#    if keys[pygame.K_LEFT]:
+#        camera_direction[0] += 0.1
+#    if keys[pygame.K_RIGHT]:
+#        camera_direction[0] -= 0.1
+#    if keys[pygame.K_q]:
+#        camera_direction[2] += 0.1
+#    if keys[pygame.K_e]:
+#        camera_direction[2] -= 0.1
             
     screen.fill((31, 31, 31))
     cube.update(faces)
+
+    cube.rot += 0.01
+    cube.rot2 += 0.01
+
+    prism.update(faces)
     renderFaces(faces)
 
     clock.tick(60)
