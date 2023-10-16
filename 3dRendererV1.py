@@ -173,7 +173,7 @@ class Cube:
                 
         sceneFaces.append([self.vertices, self.faces, self.normals])
 
-colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0), (255, 0, 255), (0, 255, 255)]
+colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0), (255, 0, 255), (0, 255, 255), (255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0), (255, 0, 255), (0, 255, 255)]
 
 rotation_axis = [1, 0, 0]
 rotation_axis2 = [0, 1, 0]
@@ -312,8 +312,8 @@ while True:
     cube.rot += 0.01
     cube.rot2 += 0.01
 
-    prism.update(faces)
     renderFaces(faces)
 
-    clock.tick(60)
+    clock.tick(144)
+    pygame.display.set_caption('pygame renderer / FPS: ' + str(int(clock.get_fps())))
     pygame.display.flip()
