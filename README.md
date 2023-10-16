@@ -1,4 +1,5 @@
 # 3D-Renderer (Python)
+ ![alt text](https://github.com/Snayck/3D-Renderer/blob/main/cubeSpin.gif?raw=true)
 - this is my first attempt at 3d graphics and eventually shading
 - renderer uses a face sorting algorithm rather than a traditional zbuffer for rendering. this will cause faces to clip and render over one another when viewing them at specific angles
 ## To-do:
